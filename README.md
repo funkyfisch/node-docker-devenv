@@ -2,7 +2,7 @@
 ### Development environment in docker for Node.js
 
 ## Building Image
-```
+```bash
 docker build -f docker/Dockerfile \
     --build-arg USER_ID=`id -u` --build-arg GROUP_ID=`id -g` \
     -t node-dev .
@@ -12,7 +12,7 @@ docker build -f docker/Dockerfile \
 
 Navigate to your node js codebase, and then :
 
-```
+```bash
 docker run --rm -ti -v `pwd`:/home/node/app node-dev bash
 ```
 
@@ -20,7 +20,7 @@ Append any additional options (such as port mapping) as you need.
 Instead of bash you can also directly run any of your npm scripts,
 as defined on your package.json file.
 
-```
+```bash
 docker run --rm -ti -v `pwd`:/home/node/app -p 8080:8080 node-dev npm test
 ```
 
@@ -41,7 +41,7 @@ By default, all containers from this image will have **nodemon**, **mocha**, **i
 By specifying an additional build argument, you can specify which node version you need.
 Default is node 10.
 
-```
+```bash
 docker build -f docker/Dockerfile \
     --build-arg USER_ID=`id -u` --build-arg GROUP_ID=`id -g` \
     --build-arg NODE_VERSION=10 \

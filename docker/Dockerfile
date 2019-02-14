@@ -75,16 +75,17 @@ RUN apt-get update && apt-get install -y nano
 # NPM global tools installation :
 # nodemon for development,
 # mocha for testing,
-# istanbul for code coverage,
-# vue-cli for client front ent development
+# istanbul for code coverage
 # Installation is done in steps so as not
 # to saturate the network with requests
+# 
+# TODO: create iterator, so that this list can be supplied as a
+# build argument
 
 RUN npm install nodemon -g --verbose \
     && npm install mocha -g --verbose \
     && npm install istanbul -g --verbose \
-    && npm install grunt -g --verbose \
-    && npm install vue-cli -g --verbose
+    && npm install grunt -g --verbose
 
 # Switch to the non-root node user and the app base dir
 

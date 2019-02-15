@@ -8,15 +8,19 @@
 # is created with setting "node" as a user with the same UID as
 # the host user running the container.
 
-# Arguments passed to image. If not passed, defaults are used
+# NODE_VERSION is passed here. Rest of arguments are passed after
+# FROM statement, because of https://github.com/moby/moby/issues/34129
 
-ARG GROUP_ID
-ARG USER_ID
 ARG NODE_VERSION=10
 
 # Base node image. Version is determined from argument
 
 FROM node:${NODE_VERSION}
+
+# Mandatory arguments passed to image.
+
+ARG GROUP_ID
+ARG USER_ID
 
 # Environment setup
 
@@ -28,7 +32,7 @@ ENV NODE_ENV="development"
 # Enforce the passing of specific build-time parameters
 
 RUN  : "${GROUP_ID:?USER_ID:?Build argument needs to be \
-    set and non-empty.}"
+     set and non-empty.}"
 
 # Get rid of the default node user if the host user id is not
 # already 1000. Will be recreated with custom UID later.
@@ -73,19 +77,15 @@ RUN echo $http_proxy && echo npm config list
 RUN apt-get update && apt-get install -y nano
 
 # NPM global tools installation :
-# nodemon for development,
-# mocha for testing,
-# istanbul for code coverage
-# Installation is done in steps so as not
-# to saturate the network with requests
-# 
-# TODO: create iterator, so that this list can be supplied as a
-# build argument
+# Read from file global_modules, iterate through it and install
+# global modules
 
-RUN npm install nodemon -g --verbose \
-    && npm install mocha -g --verbose \
-    && npm install istanbul -g --verbose \
-    && npm install grunt -g --verbose
+COPY global_modules /home/global_modules
+RUN GLOBAL_MODULES="/home/global_modules" && \
+      while read p \
+      ;do \
+        npm install $p -g --verbose \
+      ;done < $GLOBAL_MODULES
 
 # Switch to the non-root node user and the app base dir
 

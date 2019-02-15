@@ -1,0 +1,4 @@
+grunt
+mocha
+nodemon
+istanbul

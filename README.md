@@ -1,55 +1,48 @@
 # node-docker-devenv
 
-### Development environment in Docker for Node.js
+### Development environment in Docker for NodeJS
 A fully fledged, dockerised NodeJS development environment, for keeping your
 host machine as clean as possible.
 
 ## Building Image
 ```bash
-docker build -f docker/Dockerfile \
-    --build-arg USER_ID=`id -u` \
-    --build-arg GROUP_ID=`id -g` \
-    -t node-dev .
+# arguments are optional
+
+docker build \
+    --build-arg NODE_MAJOR_VERSION=14 \
+    --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
+    -t node-docker-devenv:latest  .
 ```
 
 ## Running Container
 
-Navigate to your node js codebase, and then :
+Navigate to the directory that you want to work in.
+You can use the script that provides all the needed arguments and options,
+Export the variable DEV_PORT with a port that you would like. If not exported,
+by default port 4000 will be used on the host (that will be mapped to 8080 inside the container)
 
 ```bash
-docker run --rm -ti -v `pwd`:/home/node/app node-docker-devenv bash
+DEV_PORT=9090
+/path/to/this/repo/start-devenv.sh
 ```
 
-Append any additional options (such as port mapping) as you need.
-Instead of bash you can also directly run any of your npm scripts,
-as defined on your package.json file.
+Optionally you can create a symbolic link to this script, to make it easier to spin up the
+development environment from any place you like.
 
 ```bash
-docker run --rm -ti -v `pwd`:/home/node/app -p 8080:8080 node-docker-devenv npm test
+mkdir -p $HOME/.bin && ln -s /path/to/this/repo/start-devenv.sh $HOME/.bin/nodejs-devenv
 ```
 
-## Features
+If you need to provide extra options to your containers, go ahead and edit the script.
 
-### General
-This image will provide you with docker containers based on a base node image.
-A fully fledged nodejs development environment, which prevents literring your host machine from any installations. All you need is docker and a text editor/IDE!
 
-### Volume mapping
-This image will essentially create a user called "node" inside any containers, which will
-hold your host users ID and group ID. With volume mapping all files in your current directory will be mapped to /home/node/app directory of the container, which means you can modify/add/remove files from either host or container side and it's immediately reflected. Having a user with the same IDs removes any potential ownership problems, since all modified files will have the same owner at all times.
+## Rationale
 
-### Global Node tools
-By default, all containers from this image will have **nodemon**, **mocha**, **instanbul** and **grunt** installed as global modules. You can always edit the **global_modules** file if you need something specific. 
-
-### Flexible Node/NPM versions
-By specifying an additional build argument, you can specify which node version you need.
-Default is node 10.
-
-```bash
-docker build -f docker/Dockerfile \
-    --build-arg USER_ID=`id -u` \
-    --build-arg GROUP_ID=`id -g` \
-    --build-arg NODE_VERSION=10 \
-    -t node-dev .
-```
-
+ * we don't want to keep containers - all work should be persisted either as part of the image or as part of the workspace
+ * we want to login with the host user in order to have seamless experience with permissions and with the home directory being mounted. We need to make sure we use the same user *name* in host and container.
+ The username is also used in the entrypoint script to source the .bashrc file.
+ * a constant hostname is used so that we can tell immediatelly which shell we are on
+ * mount the directory where this script is invoked from as our workspace for portability
+ * mount group, passwd file so that we can resolve users and groups properly inside the container
+ * mount timezone to make sure time related processes have consistent formatting
+ * mount the entire home directory, mostly in order to make have our hidden folders available. Usually the hidden folders contain per-user metadata for tools and binaries. This way we also provide the ssh keys and global git configuration to able to use them inside the container.

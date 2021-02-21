@@ -20,9 +20,14 @@ Navigate to the directory that you want to work in.
 You can use the script that provides all the needed arguments and options,
 Export the variable DEV_PORT with a port that you would like. If not exported,
 by default port 4000 will be used on the host (that will be mapped to 8080 inside the container)
+Some development frameworks need an extra port in order to use live/hot reloading features
+You can export the variable HOT_RELOAD_PORT with a port you would like. If not exported,
+by default port 35729 will be used on both the host (that will be mapped to itself inside the
+container)
 
 ```bash
 DEV_PORT=9090
+HOT_RELOAD_PORT=35729
 /path/to/this/repo/start-devenv.sh
 ```
 
@@ -31,6 +36,15 @@ development environment from any place you like.
 
 ```bash
 mkdir -p $HOME/.bin && ln -s /path/to/this/repo/start-devenv.sh $HOME/.bin/nodejs-devenv
+export PATH="$HOME/.bin:$PATH"
+```
+
+Or you can copy this script into your $HOME/.bin folder and edit it from there if you need custom
+functionality:
+
+```bash
+mkdir -p $HOME/.bin && cp /path/to/this/repo/start-devenv.sh $HOME/.bin/nodejs-devenv
+export PATH="$HOME/.bin:$PATH"
 ```
 
 If you need to provide extra options to your containers, go ahead and edit the script.

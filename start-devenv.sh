@@ -4,13 +4,15 @@ IFS=$'\n\t'
 
 USER="$(whoami)"
 DEV_PORT=${DEV_PORT:-4000}
+HOT_RELOAD_PORT=${HOT_RELOAD_PORT:-35729}
 
 docker run \
     --rm \
     -it \
     -e USER=${USER} \
-    -h nodejs-docker-devenv \
+    -h node-docker-devenv \
     -p ${DEV_PORT}:8080 \
+    -p ${HOT_RELOAD_PORT}:${HOT_RELOAD_PORT} \
     -v "$(pwd)":/mnt/workspace \
     -v /etc/passwd:/etc/passwd:ro \
     -v /etc/group:/etc/group:ro \

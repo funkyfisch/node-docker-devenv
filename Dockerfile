@@ -4,6 +4,10 @@ ENV DEBIAN_FRONTEND noninteractive
 ARG NODE_MAJOR_VERSION=14
 ARG NPM_GLOBAL_MODULES
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# We do not need exact versions, each user will have their own version of the environment
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -qq \
         apt-transport-https \
@@ -24,7 +28,8 @@ RUN apt-get update \
 
 
 # Install npm nodejs and yarn
-
+# We do not need exact versions, each user will have their own version of the environment
+# hadolint ignore=DL3008
 RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
         | apt-key add - \
     && version=node_${NODE_MAJOR_VERSION}.x \
@@ -40,7 +45,8 @@ RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
 
 
 # Node global tools
-
+# We do not need exact versions, each user will have their own version of the environment
+# hadolint ignore=DL3016
 RUN npm install -g yarn ${NPM_GLOBAL_MODULES}
 
 

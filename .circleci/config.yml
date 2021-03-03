@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   shellcheck: circleci/shellcheck@2.2.2
+  hadolint: lansweeper/hadolint@x.y.z
 
 workflows:
 
@@ -17,9 +18,15 @@ workflows:
           filters:
             branches:
               ignore: master
+      - hadolint/lint:
+          requires:
+            - shellcheck/check
+          filters:
+            branches:
+              ignore: master
       # - build:
       #     requires:
-      #       - lint
+      #       - hadolint/lint:
       #     filters:
       #       branches:
       #         ignore: master

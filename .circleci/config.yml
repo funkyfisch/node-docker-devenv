@@ -24,12 +24,12 @@ workflows:
           filters:
             branches:
               ignore: master
-      # - build:
-      #     requires:
-      #       - hadolint/lint:
-      #     filters:
-      #       branches:
-      #         ignore: master
+      - build:
+          requires:
+            - hadolint/lint:
+          filters:
+            branches:
+              ignore: master
 
 
 jobs:
@@ -46,13 +46,16 @@ jobs:
             circleci-agent step halt
           fi
 
-
-  # build:
-  #   machine: true
-  #   steps:
-  #     - checkout
-  #     - run: |
-  #         docker build \
-  #           --build-arg NODE_MAJOR_VERSION=14 \
-  #           --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
-  #           -t node-docker-devenv:latest .
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run: |
+          docker build \
+            --build-arg NODE_MAJOR_VERSION=14 \
+            --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
+            -t node-docker-devenv:with-global-addons .
+      - run: |
+          docker build \
+            --build-arg NODE_MAJOR_VERSION=12 \
+            -t node-docker-devenv:12-no-global-addons .

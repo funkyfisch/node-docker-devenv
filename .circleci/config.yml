@@ -1,13 +1,59 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-# Use a package of configuration called an orb.
+
 orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+  shellcheck: circleci/shellcheck@2.2.2
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+
+  on-pull-request-update:
     jobs:
-      - welcome/run
+      - determine-job-necessity:
+          filters:
+            branches:
+              ignore: master
+      - lint:
+          requires:
+            - determine-job-necessity
+          filters:
+            branches:
+              ignore: master
+      # - build:
+      #     requires:
+      #       - lint
+      #     filters:
+      #       branches:
+      #         ignore: master
+
+
+jobs:
+
+  determine-job-necessity:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run: |
+          modified_files=$(git diff HEAD..HEAD~1 --name-only --diff-filter=M)
+          if [[ "$modified_files" == "README.md" ]]
+          then
+            circleci-agent step halt
+          fi
+
+  lint:
+    docker:
+      - image:
+    steps:
+      - checkout
+      - shellcheck/install
+      - run: |
+          shellcheck ./**/*.sh
+
+  # build:
+  #   machine: true
+  #   steps:
+  #     - checkout
+  #     - run: |
+  #         docker build \
+  #           --build-arg NODE_MAJOR_VERSION=14 \
+  #           --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
+  #           -t node-docker-devenv:latest .

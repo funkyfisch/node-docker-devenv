@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   shellcheck: circleci/shellcheck@2.2.2
-  hadolint: lansweeper/hadolint@x.y.z
+  hadolint: lansweeper/hadolint@0.0.2
 
 workflows:
 

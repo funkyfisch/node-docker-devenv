@@ -11,7 +11,7 @@ host machine as clean as possible.
 docker build \
     --build-arg NODE_MAJOR_VERSION=14 \
     --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
-    -t node-docker-devenv:latest  .
+    -t node-docker-devenv:latest .
 ```
 
 ## Running Container

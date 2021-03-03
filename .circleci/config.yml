@@ -29,7 +29,7 @@ jobs:
 
   determine-job-necessity:
     docker:
-      - image: circleci/node:lts
+      - image: cimg/base:2020.01
     steps:
       - checkout
       - run: |
@@ -41,7 +41,7 @@ jobs:
 
   lint:
     docker:
-      - image:
+      - image: cimg/base:2020.01
     steps:
       - checkout
       - shellcheck/install

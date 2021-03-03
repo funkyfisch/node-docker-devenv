@@ -1,17 +1,19 @@
 # node-docker-devenv
 
 ### Development environment in Docker for NodeJS
-A fully fledged, dockerised NodeJS development environment, for keeping your
+A full-fledged, dockerized NodeJS development environment, for keeping your
 host machine as clean as possible.
+
+[![funkyfisch](https://circleci.com/gh/funkyfisch/node-docker-devenv.svg?style=shield)](https://circleci.com/gh/funkyfisch/node-docker-devenv?branch=master)
 
 ## Building Image
 ```bash
 # arguments are optional
 
 docker build \
-    --build-arg NODE_MAJOR_VERSION=14 \
-    --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
-    -t node-docker-devenv:latest .
+  --build-arg NODE_MAJOR_VERSION=14 \
+  --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
+  -t node-docker-devenv:latest .
 ```
 
 ## Running Container

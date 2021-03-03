@@ -10,7 +10,6 @@ docker run \
     --interactive \
     --env USER=${USER} \
     --hostname node-docker-devenv \
-    --name node-docker-devenv \
     --publish ${DEV_PORT}:8080 \
     --publish ${HOT_RELOAD_PORT}:${HOT_RELOAD_PORT} \
     --rm \

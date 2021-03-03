@@ -54,7 +54,8 @@ If you need to provide extra options to your containers, go ahead and edit the s
 
 ## Rationale
 
- * we don't want to keep containers - all work should be persisted either as part of the image or as part of the workspace
+ * we don't want to keep containers - all work should be persisted either as part of the image or as
+ part of the workspace
  * we want to login with the host user in order to have seamless experience with permissions and with the home directory being mounted. We need to make sure we use the same user *name* in host and container.
  The username is also used in the entrypoint script to source the .bashrc file.
  * a constant hostname is used so that we can tell immediatelly which shell we are on

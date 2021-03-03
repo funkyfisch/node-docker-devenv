@@ -57,7 +57,10 @@ jobs:
           modified_files=$(git diff HEAD..HEAD~1 --name-only --diff-filter=M)
           if [[ "$modified_files" == "README.md" ]]
           then
-            circleci-agent step halt
+            curl \
+              -X POST https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/cancel \
+              -H 'Accept: application/json' \
+              -u '${CIRCLE_TOKEN}:'
           fi
 
   build:

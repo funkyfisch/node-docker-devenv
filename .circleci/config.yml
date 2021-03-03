@@ -31,6 +31,13 @@ workflows:
             branches:
               ignore: master
 
+  on-master-merge:
+    jobs:
+      - publish:
+          filters:
+            branches:
+              only: master
+
 
 jobs:
 
@@ -59,3 +66,8 @@ jobs:
           docker build \
             --build-arg NODE_MAJOR_VERSION=12 \
             -t node-docker-devenv:12-no-global-addons .
+
+  publish:
+    image: cimg/base:2020.01
+    steps:
+      - run: echo "published!"

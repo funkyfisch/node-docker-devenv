@@ -11,7 +11,7 @@ workflows:
           filters:
             branches:
               ignore: master
-      - lint:
+      - shellcheck/check:
           requires:
             - determine-job-necessity
           filters:
@@ -39,14 +39,6 @@ jobs:
             circleci-agent step halt
           fi
 
-  lint:
-    docker:
-      - image: cimg/base:2020.01
-    steps:
-      - checkout
-      - shellcheck/install
-      - run: |
-          shellcheck ./**/*.sh
 
   # build:
   #   machine: true

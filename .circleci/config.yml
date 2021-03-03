@@ -33,6 +33,11 @@ workflows:
 
   on-master-merge:
     jobs:
+      - determine-job-necessity:
+          filters:
+            branches:
+              only: master
+
       - publish:
           filters:
             branches:
@@ -68,6 +73,7 @@ jobs:
             -t node-docker-devenv:12-no-global-addons .
 
   publish:
-    image: cimg/base:2020.01
+    docker:
+      - image: cimg/base:2020.01
     steps:
       - run: echo "published!"

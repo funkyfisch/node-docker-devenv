@@ -47,13 +47,17 @@ RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
 # Set a global installation folder that requires no elevation
 
 RUN mkdir /npm-global \
-    && chmod +777 /npm-global \
     && npm config set prefix "/npm-global"
 
 # Node global tools
 # We do not need exact versions, each user will have their own version of the environment
 # hadolint ignore=DL3016
 RUN npm install -g yarn ${NPM_GLOBAL_MODULES}
+
+
+# Need to change permissions of /npm-global submodules
+
+RUN chmod -R +777 /npm-global
 
 
 # Add entrypoint file that will perform run-time configuration before being deployed

@@ -44,6 +44,12 @@ RUN curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
     && rm -rf /var/lib/apt/lists/*
 
 
+# Set a global installation folder that requires no elevation
+
+RUN mkdir /npm-global \
+    && chmod +777 /npm-global \
+    && npm config set prefix "/npm-global"
+
 # Node global tools
 # We do not need exact versions, each user will have their own version of the environment
 # hadolint ignore=DL3016

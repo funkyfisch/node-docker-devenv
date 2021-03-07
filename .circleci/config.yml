@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  shellcheck: circleci/shellcheck@2.2.2
-
 workflows:
 
   on-pull-request-update:
@@ -36,14 +33,15 @@ jobs:
 
   prepare:
     docker:
-      - image: 'cimg/base:stable'
+      - image: 'funkyfisch/circleci-basic-linting:0.1'
     working_directory: ~/app
     steps:
       - checkout
       - run:
-          name: Store list of modified files
+          name: Store list of modified files against master branch
           command: |
-            git diff HEAD~1..HEAD --name-only --diff-filter=d > changelist
+            git diff "$(git branch --show-current)" --name-only --diff-filter=d > changelist \
+              && cat changelist
       - persist_to_workspace:
           root: .
           paths:
@@ -51,22 +49,11 @@ jobs:
 
   lint:
     docker:
-      - image: 'cimg/base:stable'
+      - image: 'funkyfisch/circleci-basic-linting:0.1'
     working_directory: ~/app
     steps:
       - attach_workspace:
           at: .
-      - shellcheck/install
-      # below step better belongs to the prepare job
-      - run:
-          name: Install hadolint
-          command: |
-            curl -s https://api.github.com/repos/hadolint/hadolint/releases/latest \
-              | grep browser_download_url \
-              | grep Linux-x86 \
-              | cut -d '"' -f 4 \
-              | wget -qi - -O hadolint \
-            && chmod +x hadolint
       - run:
           name: Run shellcheck on shell scripts, if any
           command: |

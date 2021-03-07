@@ -8,3 +8,4 @@ source "/home/${USER}/.bashrc"
 export PATH="/npm-global/bin:${PATH}"
 
 exec "${@}"
+""

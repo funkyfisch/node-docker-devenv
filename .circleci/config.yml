@@ -33,6 +33,8 @@ jobs:
 
   prepare:
     docker:
+      # is there a benefit to defining it as an executor? maybe no more need for
+      # clean pulls each time
       - image: 'funkyfisch/circleci-basic-linting:0.1'
     working_directory: ~/app
     steps:

@@ -51,6 +51,37 @@ export PATH="$HOME/.bin:$PATH"
 
 If you need to provide extra options to your containers, go ahead and edit the script.
 
+## Managing global npm modules
+
+If you realize you needed another npm global module for your session, you can simply install it
+without elevated priviledges, using
+
+```bash
+npm install -g module-name
+```
+
+If you wanted a global module to be permanently part of your image, but you did not add it during
+the docker image build, you can do the following:
+
+```bash
+docker run \
+  --env USER="${USER}" \
+  -v /etc/passwd:/etc/passwd:ro \
+  -v /etc/group:/etc/group:ro \
+  -v /etc/timezone:/etc/timezone:ro \
+  -v "${HOME}:/home/${USER}/" \
+  --name "node-docker-devenv-install" \
+  node-docker-devenv:latest \
+  npm install -g global-module
+
+docker commit node-docker-devenv-install node-docker-devenv:latest
+```
+
+This will take the base image you already created, start a container that then only installs
+"global-module" globally, and then commits that modification on top of the existing base image.
+You can do this as many times as you like, without fearing to commit any extra work/information
+that might be present when you interactively use this image.
+
 
 ## Rationale
 

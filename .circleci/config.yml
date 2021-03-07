@@ -1,5 +1,11 @@
 version: 2.1
 
+executors:
+
+  basic:
+    docker:
+      - image: 'funkyfisch/circleci-basic-linting:0.1'
+
 workflows:
 
   on-pull-request-update:
@@ -32,10 +38,7 @@ workflows:
 jobs:
 
   prepare:
-    docker:
-      # is there a benefit to defining it as an executor? maybe no more need for
-      # clean pulls each time
-      - image: 'funkyfisch/circleci-basic-linting:0.1'
+    executor: basic
     working_directory: ~/app
     steps:
       - checkout
@@ -50,8 +53,8 @@ jobs:
             - .
 
   lint:
-    docker:
-      - image: 'funkyfisch/circleci-basic-linting:0.1'
+    # Add ability to store reports in case of failure
+    executor: basic
     working_directory: ~/app
     steps:
       - attach_workspace:
@@ -98,7 +101,6 @@ jobs:
             fi
 
   publish:
-    docker:
-      - image: cimg/base:2020.01
+    executor: basic
     steps:
       - run: echo "published!"

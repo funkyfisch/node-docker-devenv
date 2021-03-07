@@ -2,45 +2,31 @@ version: 2.1
 
 orbs:
   shellcheck: circleci/shellcheck@2.2.2
-  hadolint: lansweeper/hadolint@0.0.2
 
 workflows:
 
   on-pull-request-update:
     jobs:
-      - determine-job-necessity:
+      - prepare:
           filters:
             branches:
               ignore: master
-      - shellcheck/check:
+      - lint:
           requires:
-            - determine-job-necessity
-          filters:
-            branches:
-              ignore: master
-      - hadolint/lint:
-          requires:
-            - shellcheck/check
+            - prepare
           filters:
             branches:
               ignore: master
       - build:
           requires:
-            - hadolint/lint
+            - lint
           filters:
             branches:
               ignore: master
 
   on-master-merge:
     jobs:
-      - determine-job-necessity:
-          filters:
-            branches:
-              only: master
-
       - publish:
-          requires:
-            - determine-job-necessity
           filters:
             branches:
               only: master
@@ -48,34 +34,69 @@ workflows:
 
 jobs:
 
-  determine-job-necessity:
+  prepare:
     docker:
-      - image: cimg/base:2020.01
+      - image: 'cimg/base:stable'
+    working_directory: ~/app
     steps:
       - checkout
       - run: |
-          modified_files=$(git diff HEAD..HEAD~1 --name-only --diff-filter=M)
-          if [[ "$modified_files" == "README.md" ]]
+          git diff HEAD~1..HEAD --name-only --diff-filter=d > changelist
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  lint:
+    docker:
+      - image: 'cimg/base:stable'
+    working_directory: ~/app
+    steps:
+      - attach_workspace:
+          at: .
+      - shellcheck/install
+      # below step better belongs to the prepare job
+      - run: |
+          curl -s https://api.github.com/repos/hadolint/hadolint/releases/latest \
+            | grep browser_download_url \
+            | grep Linux-x86 \
+            | cut -d '"' -f 4 \
+            | wget -qi - -O hadolint - \
+          && chmod +x hadolint
+      - run: |
+          if ! cat changelist | grep "\.\(sh\|ash\|bash\)"
           then
-            curl \
-              -X POST https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/cancel \
-              -H 'Accept: application/json' \
-              -u '${CIRCLE_TOKEN}:'
+            echo "No shell scripts modified, skipping shellcheck"
+          else
+            shellcheck $(cat changelist | grep "\.\(sh\|ash\|bash\)")
+          fi
+      - run: |
+          if ! cat changelist | grep "\(Dockerfile\|\.dockerfile\)"
+          then
+            echo "No dockerfiles modified, skipping hadolint"
+          else
+            echo "Running hadolint"
           fi
 
   build:
     machine: true
+    working_directory: ~/app
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run: |
-          docker build \
-            --build-arg NODE_MAJOR_VERSION=14 \
-            --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
-            -t node-docker-devenv:with-global-addons .
-      - run: |
-          docker build \
-            --build-arg NODE_MAJOR_VERSION=12 \
-            -t node-docker-devenv:12-no-global-addons .
+          if ! cat changelist | grep "\(Dockerfile\|\.dockerfile\)"
+          then
+            echo "No dockerfiles modified, skipping build"
+          else
+            docker build \
+              --build-arg NODE_MAJOR_VERSION=14 \
+              --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
+              -t node-docker-devenv:with-global-addons .
+            docker build \
+              --build-arg NODE_MAJOR_VERSION=12 \
+              -t node-docker-devenv:12-no-global-addons .
+          fi
 
   publish:
     docker:

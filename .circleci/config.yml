@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Store list of modified files against master branch
           command: |
-            git diff "$(git branch --show-current)" --name-only --diff-filter=d > changelist \
+            git diff master.."$(git branch --show-current)" --name-only --diff-filter=d > changelist \
               && cat changelist
       - persist_to_workspace:
           root: .

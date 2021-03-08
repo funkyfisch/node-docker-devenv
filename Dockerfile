@@ -9,9 +9,8 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # We do not need exact versions, each user will have their own version of the environment
 # hadolint ignore=DL3008
 RUN export DEBIAN_FRONTEND=noninteractive \
-  && export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
-  && apt-get -qy update \
-  && apt-get -qy install \
+  && apt-get -qq update \
+  && apt-get -qq install \
     --no-install-recommends \
     apt-transport-https \
     build-essential \
@@ -24,7 +23,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     software-properties-common \
     wget \
     xz-utils \
-  && apt-get -qy clean \
+  && apt-get -qq clean \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s python3 /usr/bin/python
 
@@ -38,11 +37,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   && version=node_${NODE_MAJOR_VERSION}.x \
   && distro="$(lsb_release -cs)" \
   && add-apt-repository -s "deb https://deb.nodesource.com/$version $distro main" \
-  && apt-get -qy update \
-  && apt-get -qy install \
+  && apt-get -qq update \
+  && apt-get -qq install \
     --no-install-recommends \
     nodejs \
-  && apt-get -qy clean \
+  && apt-get -qq clean \
   && rm -rf /var/lib/apt/lists/*
 
 

@@ -13,32 +13,32 @@ workflows:
       - prepare:
           filters:
             branches:
-              ignore: master
+              ignore: ${TRUNK_NAME}
       - lint:
           requires:
             - prepare
           filters:
             branches:
-              ignore: master
+              ignore: ${TRUNK_NAME}
       - build:
           requires:
             - lint
           filters:
             branches:
-              ignore: master
+              ignore: ${TRUNK_NAME}
 
-  on-master-merge:
+  on-trunk-merge:
     jobs:
       - prepare:
           filters:
             branches:
-              only: master
+              only: ${TRUNK_NAME}
       - publish:
           requires:
             - prepare
           filters:
             branches:
-              only: master
+              only: ${TRUNK_NAME}
 
 
 jobs:

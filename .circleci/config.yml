@@ -51,8 +51,20 @@ jobs:
       - run:
           name: Store list of modified files against master branch
           command: |
-            git diff master.."$(git branch --show-current)" --name-only --diff-filter=d > changelist \
+            if [[ "$(git branch --show-current)" == "master" ]]
+            then
+              git diff \
+                HEAD~1..HEAD \
+                --name-only \
+                --diff-filter=d > changelist \
               && cat changelist
+            else
+              git diff \
+                master.."$(git branch --show-current)" \
+                --name-only \
+                --diff-filter=d > changelist \
+              && cat changelist
+            fi
       - persist_to_workspace:
           root: .
           paths:

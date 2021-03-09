@@ -1,6 +1,7 @@
 # node-docker-devenv
 
 ### Development environment in Docker for NodeJS
+
 A full-fledged, dockerized NodeJS development environment, for keeping your
 host machine as clean as possible.
 

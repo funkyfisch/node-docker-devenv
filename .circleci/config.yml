@@ -125,9 +125,9 @@ jobs:
             else
               docker build \
                 --build-arg NODE_MAJOR_VERSION=14 \
-                -t "${DOCKERHUB_USERNAME}/${DOCKERHUB_IMAGE}:latest" .
+                -t "${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}:latest" .
               echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USER --password-stdin
-              docker push "${DOCKERHUB_USERNAME}/${DOCKERHUB_IMAGE}:latest"
+              docker push "${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}:latest"
             fi
             if cat changelist | grep "\.md"
             then
@@ -136,7 +136,7 @@ jobs:
               docker run -v $PWD:/workspace \
                 -e DOCKERHUB_USERNAME=$DOCKERHUB_USER \
                 -e DOCKERHUB_PASSWORD=$DOCKERHUB_TOKEN \
-                -e DOCKERHUB_REPOSITORY="${DOCKERHUB_USERNAME}/${DOCKERHUB_IMAGE}" \
+                -e DOCKERHUB_REPOSITORY="${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}" \
                 -e README_FILEPATH='/workspace/README.md' \
                 peterevans/dockerhub-description:2
             fi

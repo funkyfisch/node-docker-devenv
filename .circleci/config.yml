@@ -26,12 +26,6 @@ workflows:
           filters:
             branches:
               ignore: master
-      - publish:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: master
 
   on-master-merge:
     jobs:

@@ -5,6 +5,7 @@ A full-fledged, dockerized NodeJS development environment, for keeping your
 host machine as clean as possible.
 
 [![funkyfisch](https://circleci.com/gh/funkyfisch/node-docker-devenv.svg?style=shield)](https://circleci.com/gh/funkyfisch/node-docker-devenv?branch=master)
+![Docker Pulls](https://img.shields.io/docker/pulls/funkyfisch/node-docker-devenv)
 
 ## Building Image
 ```bash

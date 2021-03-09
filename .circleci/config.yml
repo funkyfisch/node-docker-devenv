@@ -138,7 +138,7 @@ jobs:
             else
               docker run -v $PWD:/workspace \
                 -e DOCKERHUB_USERNAME=$DOCKERHUB_USER \
-                -e DOCKERHUB_PASSWORD=$DOCKERHUB_TOKEN \
+                -e DOCKERHUB_PASSWORD=$DOCKERHUB_PASSWORD \
                 -e DOCKERHUB_REPOSITORY="${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}" \
                 -e README_FILEPATH='/workspace/README.md' \
                 peterevans/dockerhub-description:2

@@ -30,7 +30,7 @@ workflows:
           requires:
             - build
           filters:
-            breanches:
+            branches:
               ignore: master
 
   on-master-merge:

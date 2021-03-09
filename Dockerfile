@@ -53,7 +53,7 @@ RUN mkdir /npm-global \
 # Node global tools
 # We do not need exact versions, each user will have their own version of the environment
 # hadolint ignore=DL3016
-RUN npm install -g yarn ${NPM_GLOBAL_MODULES}
+RUN npm install -g npm yarn ${NPM_GLOBAL_MODULES}
 
 
 # Need to change permissions of /npm-global submodules

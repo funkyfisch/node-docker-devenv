@@ -29,7 +29,13 @@ workflows:
 
   on-master-merge:
     jobs:
+      - prepare:
+          filters:
+            branches:
+              only: master
       - publish:
+          requires:
+            - prepare
           filters:
             branches:
               only: master
@@ -95,12 +101,39 @@ jobs:
                 --build-arg NODE_MAJOR_VERSION=14 \
                 --build-arg NPM_GLOBAL_MODULES="grunt gulp eslint nodemon" \
                 -t node-docker-devenv:with-global-addons .
-              docker build \
-                --build-arg NODE_MAJOR_VERSION=12 \
-                -t node-docker-devenv:12-no-global-addons .
             fi
 
   publish:
-    executor: basic
+    machine: true
+    working_directory: ~/app
     steps:
-      - run: echo "published!"
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build and publish new images, if any related content has changed
+          command: |
+            if ! cat changelist | grep "\(Dockerfile\|\.dockerfile\)" \
+              && ! cat changelist | grep "\.\(sh\|ash\|bash\)"
+            then
+              echo "No relevant content changed, skipping build and push"
+            else
+              docker build \
+                --build-arg NODE_MAJOR_VERSION=14 \
+                -t "${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}:latest" .
+              echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USER --password-stdin
+              docker push "${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}:latest"
+            fi
+      - run:
+          name: Update docker hub, if documentation has been updated
+          command: |
+            if ! cat changelist | grep "\.md"
+            then
+              echo "No documentation was changed, skipping update of docker hub description"
+            else
+              docker run -v $PWD:/workspace \
+                -e DOCKERHUB_USERNAME=$DOCKERHUB_USER \
+                -e DOCKERHUB_PASSWORD=$DOCKERHUB_PASSWORD \
+                -e DOCKERHUB_REPOSITORY="${DOCKERHUB_USER}/${DOCKERHUB_IMAGE}" \
+                -e README_FILEPATH='/workspace/README.md' \
+                peterevans/dockerhub-description:2
+            fi

@@ -5,8 +5,24 @@ A full-fledged, dockerized NodeJS development environment, for keeping your
 host machine as clean as possible.
 
 [![funkyfisch](https://circleci.com/gh/funkyfisch/node-docker-devenv.svg?style=shield)](https://circleci.com/gh/funkyfisch/node-docker-devenv?branch=master)
+![Docker Pulls](https://img.shields.io/docker/pulls/funkyfisch/node-docker-devenv)
+
+## Pulling Image
+
+Currently an image is available on DockerHub, using the latest tag. This points to
+an Ubuntu:20.04 based image, which has the latest NodeJS LTS version installed. It is always
+automatically updated when new changes are merged to the main branch of this repo.
+
+```bash
+docker pull funkyfisch/node-docker-devenv:latest \
+  && docker tag funkyfisch/node-docker-devenv node-docker-devenv:latest
+```
 
 ## Building Image
+
+If you want to create specific environments for your needs, you can select which NodeJS LTS version
+to install, as well as add any npm global modules:
+
 ```bash
 # arguments are optional
 

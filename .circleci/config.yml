@@ -49,9 +49,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Store list of modified files against master branch
+          name: Store list of modified files against the trunk
           command: |
-            if [[ "$(git branch --show-current)" == "master" ]]
+            if [[ "$(git branch --show-current)" == "${TRUNK_NAME}" ]]
             then
               git diff \
                 HEAD~1..HEAD \
@@ -60,7 +60,7 @@ jobs:
               && cat changelist
             else
               git diff \
-                master.."$(git branch --show-current)" \
+                ${TRUNK_NAME}.."$(git branch --show-current)" \
                 --name-only \
                 --diff-filter=d > changelist \
               && cat changelist

@@ -4,7 +4,7 @@ executors:
 
   basic:
     docker:
-      - image: 'funkyfisch/circleci-basic-linting:0.1'
+      - image: 'funkyfisch/circleci-basic-linting:0.2'
 
 workflows:
 
@@ -13,32 +13,32 @@ workflows:
       - prepare:
           filters:
             branches:
-              ignore: ${TRUNK_NAME}
+              ignore: $TRUNK_NAME
       - lint:
           requires:
             - prepare
           filters:
             branches:
-              ignore: ${TRUNK_NAME}
+              ignore: $TRUNK_NAME
       - build:
           requires:
             - lint
           filters:
             branches:
-              ignore: ${TRUNK_NAME}
+              ignore: $TRUNK_NAME
 
   on-trunk-merge:
     jobs:
       - prepare:
           filters:
             branches:
-              only: ${TRUNK_NAME}
+              only: $TRUNK_NAME
       - publish:
           requires:
             - prepare
           filters:
             branches:
-              only: ${TRUNK_NAME}
+              only: $TRUNK_NAME
 
 
 jobs:

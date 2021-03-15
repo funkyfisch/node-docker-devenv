@@ -4,7 +4,7 @@ executors:
 
   basic:
     docker:
-      - image: 'funkyfisch/circleci-basic-linting:0.1'
+      - image: 'funkyfisch/circleci-basic-linting:0.2'
 
 workflows:
 

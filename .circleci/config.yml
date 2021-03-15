@@ -4,9 +4,9 @@ executors:
 
   basic:
     docker:
-      - image: 'funkyfisch/circleci-basic-linting:0.2'
+      - image: 'funkyfisch/circleci-basic-linting:0.1'
 
-workflows:`
+workflows:
 
   on-pull-request-update:
     jobs:
@@ -93,7 +93,7 @@ jobs:
             then
               echo "No dockerfiles modified, skipping hadolint"
             else
-              hadolint $(cat changelist | grep "\(Dockerfile\|\.dockerfile\)")
+              echo "Running hadolint"
             fi
 
   build:
